@@ -3,8 +3,10 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from create_bot import dp
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
-from keybords import kb_admin, kb_client
+from keybords import kb_admin, kb_client, admin_kb
 from aiogram.types import ReplyKeyboardRemove
+from data_base import sqlite_db
+import sqlite3 as sq
 
 
 class FSMAdmin(StatesGroup):
@@ -50,10 +52,13 @@ async def load_name(message: types.Message, state: FSMContext):
 async def load_document(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['document'] = message.document.file_id
-    async with state.proxy() as data:
-        await message.reply(str(data))
 
+    await sqlite_db.sql_add_command(state)
+    await message.answer('Есть еще что добавить?', reply_markup=admin_kb.button_case_admin)
     await state.finish()
+
+    # async with state.proxy() as data:
+    #     await message.reply(str(data))
 
 
 def register_handlers_admin(dp: Dispatcher):
