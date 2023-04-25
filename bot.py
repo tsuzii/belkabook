@@ -3,7 +3,7 @@ import logging
 import time
 
 from aiogram.utils import executor
-from keybords import kb_client
+from keybords import kb_client, kb_admin
 from create_bot import dp
 from handlers import client, admin, other
 

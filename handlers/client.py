@@ -4,7 +4,7 @@ import time
 
 from aiogram import types, Dispatcher
 from create_bot import dp, bot
-from keybords import kb_client
+from keybords import kb_client, kb_admin
 from aiogram.types import ReplyKeyboardRemove
 
 logging.basicConfig(level=logging.INFO)
