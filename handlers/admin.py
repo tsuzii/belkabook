@@ -1,6 +1,6 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from create_bot import dp
+from create_bot import dp, bot
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from keybords import kb_admin, kb_client, admin_kb
@@ -12,6 +12,7 @@ import sqlite3 as sq
 class FSMAdmin(StatesGroup):
     photo = State()
     name = State()
+    author = State()
     document = State()
 
 
@@ -45,13 +46,22 @@ async def load_name(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['name'] = message.text
     await FSMAdmin.next()
+    await message.reply('Имя автора: ', reply_markup=kb_admin)
+
+
+async def load_author(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['author'] = message.text
+    await FSMAdmin.next()
     await message.reply('Добавь файл книги', reply_markup=kb_admin)
 
-
 # @dp.message_handler(content_types=['document'], state=FSMAdmin.file)
+
+
 async def load_document(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['document'] = message.document.file_id
+    # await bot.download_file(message.document, '/Users/tsuzii/Desktop/BELKABOOK')
 
     await sqlite_db.sql_add_command(state)
     await message.answer('Есть еще что добавить?', reply_markup=admin_kb.button_case_admin)
@@ -63,13 +73,15 @@ async def load_document(message: types.Message, state: FSMContext):
 
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(
-        cm_start, commands=['Добавить'], state=None)
-    dp.register_message_handler(cancel_handler, state='*', commands='Отмена')
+        cm_start, lambda message: message.text.startswith('Добавить'))
+    dp.register_message_handler(
+        cancel_handler, lambda message: message.text.startswith('Отмена'))
 
     dp.register_message_handler(cancel_handler, Text(
         equals='Отмена', ignore_case=True), state="*")
     dp.register_message_handler(load_photo, content_types=[
                                 'photo'], state=FSMAdmin.photo)
     dp.register_message_handler(load_name, state=FSMAdmin.name)
+    dp.register_message_handler(load_author, state=FSMAdmin.author)
     dp.register_message_handler(load_document, content_types=[
                                 'document'], state=FSMAdmin.document)

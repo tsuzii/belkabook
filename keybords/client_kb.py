@@ -1,8 +1,8 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
 b1 = KeyboardButton('Поиск книги по названию')
-b2 = KeyboardButton('/Добавить')
-b3 = KeyboardButton('/Отмена')
+b2 = KeyboardButton('Добавить')
+b3 = KeyboardButton('Отмена')
 b4 = KeyboardButton('Библиотека')
 b5 = KeyboardButton('Назад')
 
