@@ -1,5 +1,6 @@
 import sqlite3 as sq
 from create_bot import dp, bot
+from handlers import client
 
 
 def sql_start():
@@ -24,3 +25,10 @@ async def sql_read(message):
     for ret in cur.execute('SELECT * FROM library').fetchall():
         await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nАвтор: {ret[2]}')
         await bot.send_document(message.from_user.id, ret[3])
+
+
+async def find_book(message):
+    for ret in cur.execute('SELECT * FROM library').fetchall():
+        if ret[1] == message:
+            await bot.send_photo(message.from_user.id, ret[0], f'{ret[1]}\nАвтор: {ret[2]}')
+            await bot.send_document(message.from_user.id, ret[3])

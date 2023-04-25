@@ -61,14 +61,10 @@ async def load_author(message: types.Message, state: FSMContext):
 async def load_document(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['document'] = message.document.file_id
-    # await bot.download_file(message.document, '/Users/tsuzii/Desktop/BELKABOOK')
 
     await sqlite_db.sql_add_command(state)
     await message.answer('Есть еще что добавить?', reply_markup=admin_kb.button_case_admin)
     await state.finish()
-
-    # async with state.proxy() as data:
-    #     await message.reply(str(data))
 
 
 def register_handlers_admin(dp: Dispatcher):
